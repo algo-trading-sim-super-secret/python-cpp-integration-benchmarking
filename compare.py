@@ -1,16 +1,5 @@
-class DefaultObject:
-    def __init__(self):
-        pass 
-    def matrixComputation(n,dim):
-        pass
+import numba 
 try:
-    # from robot_lib import Robot as Robot_cppyy
-    # robot_cppyy = Robot_cppyy()
-    # import cppyy 
-    # cppyy.load_library("./librobot.so")
-    # cppyy.include("robot.h")
-    # robot_cppyy = cppyy.gbl.Robot()
-    # pass 
     import cppyy 
 
     cppyy.include("eigen3/Eigen/Dense")
@@ -40,22 +29,23 @@ try:
     }
         """
     )
-    robot_cppyy = DefaultObject()
-    robot_cppyy.matrixComputation = cppyy.gbl.matrixComputation
+    cppyy_native_matrixComputation = cppyy.gbl.matrixComputation
+
+    cppyy.include("BenchMarks.h")
+    cppyy.load_library("benchmarks_libpb")
+    cppyy_matrixComputation =cppyy.gbl.BenchMarks.matrixComputation 
+
 except Exception as ex:
     print(ex) 
-    assert False
     robot_cppyy = None
 
 try:
     # from robot_libpb import Robot as Robot_pybind
     import benchMarks_pybind_libpb
-    robot_pybind = DefaultObject() 
 
-    robot_pybind.matrixComputation = benchMarks_pybind_libpb.BenchMarks.matrixComputation
+    pybind_matrixComputation = benchMarks_pybind_libpb.BenchMarks.matrixComputation
 except:
-    robot_pybind = None
-
+    pybind_matrixComputation = None
 
 from numpy.linalg import solve, norm
 from numpy.random import randn
@@ -73,8 +63,7 @@ def py_inv(n, dim):
     return sum
 
 
-from numba import njit
-@njit
+@numba.jit(nopython=True)
 def py_inv_numba(n, dim):
     sum = 0
     for _ in range(n):
@@ -84,28 +73,46 @@ def py_inv_numba(n, dim):
         sum += norm(C)
     return sum
 
+## Doesn't work because not using pypy interpreter
+# import cppyy.numba_ext
+# @numba.jit(nopython=True)
+# def cppyy_inv_numba(n,dim):
+#     return cppyy.gbl.matrixComputation(n, dim)
+
 
 def cpp_inv(n, dim):
     system('./cpp_run {} {}'.format(n, dim))
 
 candidates = [(cpp_inv, 'C++'), (py_inv, 'Python'), (py_inv_numba, 'Numba')]
-# candidates =  [(cpp_inv, 'C++'), (py_inv, 'Python')]
-if robot_cppyy is not None:
-    candidates.append((robot_cppyy.matrixComputation, 'cppyy'))
-if robot_pybind is not None:
-    candidates.append((robot_pybind.matrixComputation, 'pybind'))
+
+if cppyy_matrixComputation is not None:
+    candidates.append((cppyy_matrixComputation, 'cppyy_library'))
+    candidates.append( (cppyy_native_matrixComputation, 'cppyy_native'))
+    # candidates.append((cppyy_inv_numba, 'cppyy+numba'))
+
+if pybind_matrixComputation is not None:
+    candidates.append((pybind_matrixComputation, 'pybind'))
+
+
+# find the longest length name for formatting output 
+test_name_length = 0
+for (_,test_name) in candidates:
+    test_name_length = max(test_name_length,len(test_name))
+
 
 def elapsed_time(n, dim):
     for fct, method in candidates:
+        time.sleep(1)
         t0 = time.time()
         fct(n, dim)
-        print('   {}\t-> {:.2f} ms'.format(method, 1000*(time.time() - t0)))
+        print(f'{method:<{test_name_length}}\t-> {1000*(time.time() - t0):.2f} ms' )
 
-
-# TESTS
-print("Results:")
-
-tests = {0:[0,0], 1:[50,50], 2:[100,100], 3:[250,250], 4:[500,500]}
-for (n, dim) in tests.values():
-    print(f"============Test n={n} dim={dim}=============")
-    elapsed_time(n, dim)
+# =================================================================================
+# CONDUCT TESTS
+if __name__ == "__main__":
+    print("Results:")
+    # tests = {0:[0,0]}
+    tests = {0:[0,0], 1:[50,50], 2:[100,100], 3:[250,250], 4:[500,500]}
+    for (n, dim) in tests.values():
+        print(f"============Test n={n} dim={dim}=============")
+        elapsed_time(n, dim)
