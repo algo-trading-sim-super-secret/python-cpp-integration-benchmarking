@@ -12,8 +12,11 @@ int main(int argc, char* argv[])
     /*if (argc >= 3) dim = std::atoi(argv[2]);*/
 
     /*std::cout << "Running matrix benchmark with n = " << n << ", dim = " << dim << std::endl;*/
-    BenchMarks::matrixComputation(n, dim);
+    /*BenchMarks::matrixComputation(n, dim);*/
     /*std::cout << BenchMarks::matrixComputation(n, dim) << std::endl;*/
+
+    /*BenchMarks::jsonRead("people.json");*/
+    BenchMarks::csvRead("satellite_data/");
 
     return 0;
 }

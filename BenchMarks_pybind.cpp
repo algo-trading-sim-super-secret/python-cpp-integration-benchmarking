@@ -3,9 +3,10 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(benchMarks_pybind_libpb, m) {
+PYBIND11_MODULE(benchmarks_pybind_libpb, m) {
     py::class_<BenchMarks>(m, "BenchMarks")
-        .def("matrixComputation", &BenchMarks::matrixComputation);
+        .def("matrixComputation", &BenchMarks::matrixComputation)
+        .def("csvRead",&BenchMarks::csvRead);
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;
 #else

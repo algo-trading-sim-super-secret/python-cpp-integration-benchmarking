@@ -6,7 +6,7 @@ Each one of these methods are used called with varying test cases on computing t
 
 # Compilation
 C++:
-`g++ -O3 -std=c++20 cpp_run.cpp BenchMarks.cpp -o cpp_run && ./cpp_run 10 10`
+`g++ -O3 -std=c++2b cpp_run.cpp BenchMarks.cpp -o cpp_run && ./cpp_run 10 10`
 
 cppyy_library:
 `g++ -O3 -Wall -shared -std=c++2b -fpic BenchMarks.cpp -o benchmarks_libpb.so`
@@ -16,8 +16,6 @@ Inside of `compare.py`, I needed to defined the function in C++ to be converted 
 
 Pybind:
 `g++ -O3 -Wall -shared -std=c++2b -fpic $(python3 -m pybind11 --includes) BenchMarks_pybind.cpp BenchMarks.cpp -o benchmarks_pybind_libpb$(python3 -m pybind11 --extension-suffix)`
-
-`g++ -O3 -Wall -shared -std=c++2b -fpic BenchMarks.cpp -o benchmarks_libpb.so`
 
 Numba:
 Decorate the python `py_inv` function with the njit decorator.
@@ -31,6 +29,14 @@ def cppyy_inv_numba(n,dim):
     return cppyy.gbl.matrixComputation(n, dim)
 ```
 will fail to load unless `__pypy__` is available. 
+
+
+# Tests conducted:
+### Computation:
+
+### IO Read/Write:
+
+
 
 
 # Environment:
@@ -49,10 +55,22 @@ invoke==2.2.0
 llvmlite==0.44.0
 numba==0.61.2
 numpy==2.2.6
+pandas==2.3.1
 pybind11==3.0.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
 scipy==1.16.0
+six==1.17.0
+tzdata==2025.2
 ```
+C++:
 
+``` 
+# json
+wget https://raw.githubusercontent.com/nlohmann/json/develop/sing
+le_include/nlohmann/json.hpp -P include/
+
+```
 Note: you should run this set up on any machine you plan to benchmark on, as this is subjective to the system used and package versioning. 
 
 # Caveats

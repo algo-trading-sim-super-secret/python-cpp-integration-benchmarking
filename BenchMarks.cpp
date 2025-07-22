@@ -1,7 +1,6 @@
 #include "BenchMarks.h"
-using namespace Eigen;
-using namespace std::chrono;
 
+using namespace Eigen;
 double BenchMarks::matrixComputation(unsigned int n, unsigned int dim)
 {
     double sum = 0;
@@ -16,17 +15,56 @@ double BenchMarks::matrixComputation(unsigned int n, unsigned int dim)
         /*A = MatrixXd::Random(dim,dim);*/
         A.setRandom();
         B.setRandom();
-        /*B = VectorXd::Random(dim);*/
         C.noalias() = A * B;
         sum += C.norm();
     }
 
     return sum;
-    /*auto end = high_resolution_clock::now();*/
-    /*auto duration = duration_cast<milliseconds>(end - start).count();*/
-    /*std::cout << "Total time: " << duration << " ms\n";*/
-    /*std::cout << "Average per run: " << static_cast<double>(duration) / n << " ms\n";*/
-    /*std::cout << "Final norm sum: " << sum << "\n";*/
-    /*return sum;*/
 }
 
+double BenchMarks::csvRead(std::string folderPath)
+{
+    // Load all file names
+    std::vector<std::string> fileNames;
+    try {
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath))
+            fileNames.push_back(entry.path().filename().string());
+    } 
+    catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Filesystem error: " << e.what() << '\n';
+    }
+
+    for (auto& fileName : fileNames){
+        std::ifstream file(folderPath+fileName);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file: " << folderPath+fileName << "\n";
+            return 1;
+        }
+
+        std::string line;
+        std::vector<std::vector<std::string>> data;
+
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            std::string cell;
+            std::vector<std::string> row;
+
+            while (std::getline(ss, cell, ',')) {
+                row.push_back(cell);
+            }
+
+            data.push_back(row);
+        }
+
+        /*// Print parsed data*/
+        /*for (const auto& row : data) {*/
+        /*    for (const auto& cell : row) {*/
+        /*        std::cout << cell << " ";*/
+        /*    }*/
+        /*    std::cout << "\n";*/
+        /*}*/
+
+        file.close();
+    }
+    return 0;
+}
