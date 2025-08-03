@@ -91,7 +91,6 @@ def py_csvRead_numba(folderPath):
     data = [] 
     data = [pandas.read_csv(filePath) for filePath in filePaths]
 
-
 def cpp_csvRead(n=10, dim=10):
     system('./cpp_run {} {}'.format(n, dim))
 

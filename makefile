@@ -15,7 +15,7 @@ cpp_run: cpp_run.cpp BenchMarks.cpp
 	$(cxx) $(cxx_flags) cpp_run.cpp BenchMarks.cpp -o cpp_run
 
 cpp_run_optimized: cpp_run.cpp BenchMarks.cpp  
-	$(cxx) $(cxx_flags_optimized_library) cpp_run.cpp BenchMarks.cpp -o cpp_run
+	$(cxx) $(cxx_flags_optimized) cpp_run.cpp BenchMarks.cpp -o cpp_run
 
 cpp_library: BenchMarks.cpp  
 	$(cxx) $(cxx_flags_optimized_library) BenchMarks.cpp -o benchmarks_libpb.so
@@ -25,4 +25,4 @@ pybind: BenchMarks_pybind.cpp
 
 
 clean:
-	rm -f benchmarks_pybind_libpb$(python_extension) cpp_run benchmarks_libpb.so
+	rm -f benchmarks_pybind_libpb$(python_extension) cpp_run benchmarks_libpb.so cpp_run
