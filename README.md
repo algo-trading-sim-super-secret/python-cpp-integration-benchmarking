@@ -5,17 +5,8 @@ This is a simple comparision between native C++ code, Native Python, Pybind11 wi
 Each one of these methods are used called with varying test cases on computing the sum of a products of a matrix of dimensionality DxD by a vector of size D for N number trials.
 
 # Compilation
-C++:
-`g++ -O3 -std=c++2b cpp_run.cpp BenchMarks.cpp -o cpp_run && ./cpp_run 10 10`
 
-cppyy_library:
-`g++ -O3 -Wall -shared -std=c++2b -fpic BenchMarks.cpp -o benchmarks_libpb.so`
-
-cppyy_native:
-Inside of `compare.py`, I needed to defined the function in C++ to be converted to Python bindings
-
-Pybind:
-`g++ -O3 -Wall -shared -std=c++2b -fpic $(python3 -m pybind11 --includes) BenchMarks_pybind.cpp BenchMarks.cpp -o benchmarks_pybind_libpb$(python3 -m pybind11 --extension-suffix)`
+You can compile using `make get_libraries, or alternatively use the following commands for each test`
 
 Numba:
 Decorate the python `py_inv` function with the njit decorator.

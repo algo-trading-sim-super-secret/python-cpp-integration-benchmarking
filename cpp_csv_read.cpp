@@ -5,8 +5,8 @@
 int main(int argc, char* argv[])
 {
     // Default parameters
-    unsigned int n = std::atoi(argv[1]);// = 1000;
-    unsigned int dim = std::atoi(argv[2]); // = 100;
+    /*unsigned int n = std::atoi(argv[1]);// = 1000;*/
+    /*unsigned int dim = std::atoi(argv[2]); // = 100;*/
 
     /*if (argc >= 2) n = std::atoi(argv[1]);*/
     /*if (argc >= 3) dim = std::atoi(argv[2]);*/
